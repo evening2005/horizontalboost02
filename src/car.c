@@ -125,7 +125,7 @@ void car_update_boost_ui(GContext *ctx, carType *carPtr) {
 void car_draw(GContext *ctx, carType *carPtr, carType *playerCar) {
     pge_sprite_draw(carPtr->sprite, ctx);
     if(carPtr == playerCar) {
-        car_update_boost_ui(ctx, carPtr);
+        // car_update_boost_ui(ctx, carPtr);
         GRect temp;
         temp.origin = carPtr->sprite->position;
         temp.size = GSize(CAR_LENGTH, CAR_WIDTH);
@@ -499,8 +499,6 @@ void car_reset(carType *carPtr, carType *playerCar, uint16_t howManyNPCs, uint64
     carPtr->rank = 1;
     carPtr->currentSpeed = 0;
     carPtr->finished = 0;
-    carPtr->aiBoostRank = 0; 
-    carPtr->aiBoostChance = 64;
     car_set_position(carPtr, playerCar, howManyNPCs, raceStartTime);
 }
 
@@ -509,13 +507,13 @@ void car_reset(carType *carPtr, carType *playerCar, uint16_t howManyNPCs, uint64
 
 
 // This stuff gets done only once
-void car_initialise(carType *carPtr, int resourceID, GColor colour, char *name) {
+void car_initialise(carType *carPtr, int resourceID, GColor colour, char *name, uint8_t aiRank, uint8_t aiChance) {
     GPoint pos;
     carPtr->sprite = pge_sprite_create(pos, resourceID);
     strncpy(carPtr->carName, name, 11);
     carPtr->carColour = colour;
-    // From now on, the reset takes place in race.c
-    //car_reset(carPtr, playerCar, howManyNPCs);
+    carPtr->aiBoostRank = aiRank; 
+    carPtr->aiBoostChance = aiChance;
 }
 
 

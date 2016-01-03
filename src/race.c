@@ -118,6 +118,7 @@ void race_draw_cars(GContext *ctx) {
         carPtr = startingGrid[c];
         car_draw(ctx, carPtr, playerCar);
     }
+    car_update_boost_ui(ctx, playerCar);
 }
 
 
@@ -194,25 +195,25 @@ void race_place_cars_on_grid() {
 
 
 
-void race_create_cars() {
+void race_create_cars(int difficulty) {
     
-    car_initialise(&blueCar, RESOURCE_ID_BLUE_CAR, GColorCadetBlue, "Player");    
+    car_initialise(&blueCar, RESOURCE_ID_BLUE_CAR, GColorCadetBlue, "Player", 0, 64);    
     race_set_player(&blueCar);
-    car_initialise(&orangeCar, RESOURCE_ID_ORANGE_CAR, GColorOrange, "Orange");
+    car_initialise(&orangeCar, RESOURCE_ID_ORANGE_CAR, GColorOrange, "Orange", 0, 64);
     race_add_to_grid(&orangeCar);
-    car_initialise(&yellowCar, RESOURCE_ID_YELLOW_CAR, GColorChromeYellow, "Yellow");    
+    car_initialise(&yellowCar, RESOURCE_ID_YELLOW_CAR, GColorChromeYellow, "Yellow", 0, 64);    
     race_add_to_grid(&yellowCar);
-    car_initialise(&greenCar, RESOURCE_ID_GREEN_CAR, GColorGreen, "Green");    
+    car_initialise(&greenCar, RESOURCE_ID_GREEN_CAR, GColorGreen, "Green", 0, 64);    
     race_add_to_grid(&greenCar);
-    car_initialise(&orangeTruck, RESOURCE_ID_ORANGE_TRUCK, GColorOrange, "OrangeT");
+    car_initialise(&orangeTruck, RESOURCE_ID_ORANGE_TRUCK, GColorOrange, "OrangeT", 0, 64);
     race_add_to_grid(&orangeTruck);
-    car_initialise(&yellowTruck, RESOURCE_ID_YELLOW_TRUCK, GColorChromeYellow, "YellowT");    
+    car_initialise(&yellowTruck, RESOURCE_ID_YELLOW_TRUCK, GColorChromeYellow, "YellowT", 0, 64);    
     race_add_to_grid(&yellowTruck);
-    car_initialise(&greenTruck, RESOURCE_ID_GREEN_TRUCK, GColorGreen, "GreenT");    
+    car_initialise(&greenTruck, RESOURCE_ID_GREEN_TRUCK, GColorGreen, "GreenT", 0, 64);    
     race_add_to_grid(&greenTruck);
-    car_initialise(&blackCar, RESOURCE_ID_BLACK_CAR, GColorBlack, "Black");
+    car_initialise(&blackCar, RESOURCE_ID_BLACK_CAR, GColorBlack, "Black", 0, 64);
     race_add_to_grid(&blackCar);
-    car_initialise(&blackTruck, RESOURCE_ID_BLACK_TRUCK, GColorBlack, "BlackT");
+    car_initialise(&blackTruck, RESOURCE_ID_BLACK_TRUCK, GColorBlack, "BlackT", 0, 64);
     race_add_to_grid(&blackTruck);
     
     // All the resets are done together here - previously, car_intialise(..) called car_reset(..)
