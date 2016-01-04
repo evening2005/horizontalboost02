@@ -58,7 +58,7 @@ typedef struct CAR carType;
 
 
 void car_update_boost_ui(GContext *ctx, carType *carPtr);
-void car_initialise(carType *carPtr, int resourceID, GColor colour, char *name, uint8_t aiRank, uint8_t aiChance);
+void car_initialise(carType *carPtr, int resourceID, GColor colour, char *name);
 void car_reset(carType *carPtr, carType *playerCar, uint16_t howManyNPCs, uint64_t raceStartTime);
 void car_set_camera_focus(carType *playerCar);
 int car_get_camera_focus();
@@ -73,6 +73,7 @@ void car_delete(carType *carPtr);
 void car_set_position(carType *carPtr, carType *playerCar, uint16_t howManyNPCs, uint64_t raceStartTime);
 uint64_t get_milli_time();
 void car_set_player_screen_pos(int posX);
+void car_set_difficulty(carType *carPtr, uint8_t aiRank, uint8_t aiChance);
 
 /*
 

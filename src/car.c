@@ -499,21 +499,25 @@ void car_reset(carType *carPtr, carType *playerCar, uint16_t howManyNPCs, uint64
     carPtr->rank = 1;
     carPtr->currentSpeed = 0;
     carPtr->finished = 0;
+    carPtr->aiBoostRank = 0; 
+    carPtr->aiBoostChance = 64;
     car_set_position(carPtr, playerCar, howManyNPCs, raceStartTime);
 }
 
 
 
-
+void car_set_difficulty(carType *carPtr, uint8_t aiRank, uint8_t aiChance) {
+    carPtr->aiBoostRank = aiRank;
+    carPtr->aiBoostChance = aiChance;
+    APP_LOG(APP_LOG_LEVEL_DEBUG, "AI: R=%d : C=%d", aiRank, aiChance);  
+}
 
 // This stuff gets done only once
-void car_initialise(carType *carPtr, int resourceID, GColor colour, char *name, uint8_t aiRank, uint8_t aiChance) {
+void car_initialise(carType *carPtr, int resourceID, GColor colour, char *name) {
     GPoint pos;
     carPtr->sprite = pge_sprite_create(pos, resourceID);
     strncpy(carPtr->carName, name, 11);
     carPtr->carColour = colour;
-    carPtr->aiBoostRank = aiRank; 
-    carPtr->aiBoostChance = aiChance;
 }
 
 

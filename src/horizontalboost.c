@@ -78,9 +78,8 @@ void pge_init() {
     load_finish_line_bitmap();
     set_up_distance_markers();
     
-    // The number represents the difficulty
-    //  **** -99 IS A DUMMY VALUE !!!! ****
-    race_create_cars(-99);
+    // The number represents the difficulty (range 0-9)
+    race_create_cars(0);
 
     // Start the game
     // Keep a Window reference for adding other UI

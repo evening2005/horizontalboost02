@@ -193,32 +193,76 @@ void race_place_cars_on_grid() {
     //updateOnceAfterFinishing = false;
 }
 
+uint8_t ranged_random(uint8_t min, uint8_t max) {
+    int8_t range = max - min;
+    if(range < 1) range = 1;
+    uint8_t rr = min + (rand() % range);
+    return rr;
+}
+
+static difficultyType difficultyParameters[10] = {
+    {4,6,32,64},
+    {3,6,64,128},
+    {3,5,64,128},
+    {2,4,64,128},
+    {1,3,64,128},
+    {1,3,160,200},
+    {1,3,208,224},
+    {0,2,208,224},
+    {0,2,224,240},
+    {0,1,240,255}
+};
 
 
-void race_create_cars(int difficulty) {
+static uint8_t levelProfiles[10][10] = {
+    {4, 2, 2, 0, 0, 0, 0, 0, 0, 0},
+    {2, 4, 2, 0, 0, 0, 0, 0, 0, 0},
+    {2, 2, 4, 0, 0, 0, 0, 0, 0, 0},
+    {0, 2, 2, 4, 0, 0, 0, 0, 0, 0},
+    {0, 0, 2, 2, 4, 0, 0, 0, 0, 0},
+    {0, 0, 0, 2, 2, 4, 0, 0, 0, 0},
+    {0, 0, 0, 0, 2, 2, 4, 0, 0, 0},
+    {0, 0, 0, 0, 0, 2, 2, 4, 0, 0},
+    {0, 0, 0, 0, 0, 0, 2, 2, 4, 0},
+    {0, 0, 0, 0, 0, 0, 0, 2, 2, 4}   
+};
+
+
+void race_set_car_level(carType *carPtr, int level) {
+    uint8_t airLo = difficultyParameters[level].aiRankMin;
+    uint8_t airHi = difficultyParameters[level].aiRankMax;
+    uint8_t aicLo = difficultyParameters[level].aiChanceMin;
+    uint8_t aicHi = difficultyParameters[level].aiChanceMax;
+    uint8_t aiRank = ranged_random(airLo, airHi);
+    uint8_t aiChance = ranged_random(aicLo, aicHi);
+    car_set_difficulty(carPtr, aiRank, aiChance);
+}
+
+void race_create_cars(int level) {
     
-    car_initialise(&blueCar, RESOURCE_ID_BLUE_CAR, GColorCadetBlue, "Player", 0, 64);    
+    car_initialise(&blueCar, RESOURCE_ID_BLUE_CAR, GColorCadetBlue, "Player");    
     race_set_player(&blueCar);
-    car_initialise(&orangeCar, RESOURCE_ID_ORANGE_CAR, GColorOrange, "Orange", 0, 64);
+    car_initialise(&orangeCar, RESOURCE_ID_ORANGE_CAR, GColorOrange, "Orange");
     race_add_to_grid(&orangeCar);
-    car_initialise(&yellowCar, RESOURCE_ID_YELLOW_CAR, GColorChromeYellow, "Yellow", 0, 64);    
+    car_initialise(&yellowCar, RESOURCE_ID_YELLOW_CAR, GColorChromeYellow, "Yellow");    
     race_add_to_grid(&yellowCar);
-    car_initialise(&greenCar, RESOURCE_ID_GREEN_CAR, GColorGreen, "Green", 0, 64);    
+    car_initialise(&greenCar, RESOURCE_ID_GREEN_CAR, GColorGreen, "Green");    
     race_add_to_grid(&greenCar);
-    car_initialise(&orangeTruck, RESOURCE_ID_ORANGE_TRUCK, GColorOrange, "OrangeT", 0, 64);
+    car_initialise(&orangeTruck, RESOURCE_ID_ORANGE_TRUCK, GColorOrange, "OrangeT");
     race_add_to_grid(&orangeTruck);
-    car_initialise(&yellowTruck, RESOURCE_ID_YELLOW_TRUCK, GColorChromeYellow, "YellowT", 0, 64);    
+    car_initialise(&yellowTruck, RESOURCE_ID_YELLOW_TRUCK, GColorChromeYellow, "YellowT");    
     race_add_to_grid(&yellowTruck);
-    car_initialise(&greenTruck, RESOURCE_ID_GREEN_TRUCK, GColorGreen, "GreenT", 0, 64);    
+    car_initialise(&greenTruck, RESOURCE_ID_GREEN_TRUCK, GColorGreen, "GreenT");    
     race_add_to_grid(&greenTruck);
-    car_initialise(&blackCar, RESOURCE_ID_BLACK_CAR, GColorBlack, "Black", 0, 64);
+    car_initialise(&blackCar, RESOURCE_ID_BLACK_CAR, GColorBlack, "Black");
     race_add_to_grid(&blackCar);
-    car_initialise(&blackTruck, RESOURCE_ID_BLACK_TRUCK, GColorBlack, "BlackT", 0, 64);
+    car_initialise(&blackTruck, RESOURCE_ID_BLACK_TRUCK, GColorBlack, "BlackT");
     race_add_to_grid(&blackTruck);
     
     // All the resets are done together here - previously, car_intialise(..) called car_reset(..)
     for(int i=0; i <= howManyNPCs; i++) {
         car_reset(startingGrid[i], playerCar, howManyNPCs, raceStartTime);
+        race_set_car_level(startingGrid[i], level);
     }
     
 }

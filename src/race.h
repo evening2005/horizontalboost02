@@ -11,7 +11,7 @@ void race_set_player(carType *pc);
 void race_frame_update();
 void race_place_cars_on_grid();
 void race_add_to_grid(carType *carPtr);
-void race_create_cars(int difficulty);
+void race_create_cars(int level);
 
 struct DIFFICULTY {
     uint8_t aiRankMin;
@@ -22,18 +22,8 @@ struct DIFFICULTY {
 
 typedef struct DIFFICULTY difficultyType;
 
-static difficultyType levels[10] = {
-    {4,6,32,64},
-    {3,6,64,128},
-    {3,5,64,128},
-    {2,4,64,128},
-    {1,3,64,128},
-    {1,3,160,200},
-    {1,3,208,224},
-    {0,2,208,224},
-    {0,2,224,240},
-    {0,1,240,255}
-};
+
+
 
 
 
