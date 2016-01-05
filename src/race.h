@@ -16,8 +16,8 @@ void race_create_cars(int level);
 struct DIFFICULTY {
     uint8_t aiRankMin;
     uint8_t aiRankMax;
-    uint8_t aiChanceMin;
-    uint8_t aiChanceMax;
+    uint16_t aiChanceMin;
+    uint16_t aiChanceMax;
 };
 
 typedef struct DIFFICULTY difficultyType;

@@ -385,7 +385,7 @@ void car_handle_ai(carType *carPtr, carType *playerCar, uint16_t howManyNPCs, ca
     car_ai_execute_steering_plan(carPtr, howManyNPCs, sortedGrid);
     // This functionality is for the "per-car" AI
     if(carPtr->rank >= carPtr->aiBoostRank) {
-        uint8_t r = rand() & 255;
+        uint16_t r = rand() & 65535;
         if(r <= carPtr->aiBoostChance) {
             car_switch_on_boost(carPtr, playerCar);
         }
@@ -500,13 +500,13 @@ void car_reset(carType *carPtr, carType *playerCar, uint16_t howManyNPCs, uint64
     carPtr->currentSpeed = 0;
     carPtr->finished = 0;
     carPtr->aiBoostRank = 0; 
-    carPtr->aiBoostChance = 64;
+    carPtr->aiBoostChance = 16384;
     car_set_position(carPtr, playerCar, howManyNPCs, raceStartTime);
 }
 
 
 
-void car_set_difficulty(carType *carPtr, uint8_t aiRank, uint8_t aiChance) {
+void car_set_difficulty(carType *carPtr, uint8_t aiRank, uint16_t aiChance) {
     carPtr->aiBoostRank = aiRank;
     carPtr->aiBoostChance = aiChance;
     APP_LOG(APP_LOG_LEVEL_DEBUG, "AI: R=%d : C=%d", aiRank, aiChance);  

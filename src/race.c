@@ -193,24 +193,24 @@ void race_place_cars_on_grid() {
     //updateOnceAfterFinishing = false;
 }
 
-uint8_t ranged_random(uint8_t min, uint8_t max) {
-    int8_t range = max - min;
+uint16_t ranged_random(uint16_t min, uint16_t max) {
+    int16_t range = max - min;
     if(range < 1) range = 1;
-    uint8_t rr = min + (rand() % range);
+    uint16_t rr = min + (rand() % range);
     return rr;
 }
 
 static difficultyType difficultyParameters[10] = {
-    {4,6,32,64},
-    {3,6,64,128},
-    {3,5,64,128},
-    {2,4,64,128},
-    {1,3,64,128},
-    {1,3,160,200},
-    {1,3,208,224},
-    {0,2,208,224},
-    {0,2,224,240},
-    {0,1,240,255}
+    {4,6,64,128},
+    {3,6,128,256},
+    {3,5,256,372},
+    {2,4,372,512},
+    {1,3,512,1024},
+    {1,3,1024,4096},
+    {1,3,4096,8192},
+    {0,2,8192,16384},
+    {0,2,16384,32768},
+    {0,1,48000,65535}
 };
 
 
@@ -231,10 +231,10 @@ static uint8_t levelProfiles[10][10] = {
 void race_set_car_level(carType *carPtr, int level) {
     uint8_t airLo = difficultyParameters[level].aiRankMin;
     uint8_t airHi = difficultyParameters[level].aiRankMax;
-    uint8_t aicLo = difficultyParameters[level].aiChanceMin;
-    uint8_t aicHi = difficultyParameters[level].aiChanceMax;
+    uint16_t aicLo = difficultyParameters[level].aiChanceMin;
+    uint16_t aicHi = difficultyParameters[level].aiChanceMax;
     uint8_t aiRank = ranged_random(airLo, airHi);
-    uint8_t aiChance = ranged_random(aicLo, aicHi);
+    uint16_t aiChance = ranged_random(aicLo, aicHi);
     car_set_difficulty(carPtr, aiRank, aiChance);
 }
 
@@ -262,7 +262,21 @@ void race_create_cars(int level) {
     // All the resets are done together here - previously, car_intialise(..) called car_reset(..)
     for(int i=0; i <= howManyNPCs; i++) {
         car_reset(startingGrid[i], playerCar, howManyNPCs, raceStartTime);
-        race_set_car_level(startingGrid[i], level);
+    }
+    
+    // Now we must set the difficulty levels of the NPC cars
+    int carNumber = 0;
+    for(int i=0; i <= 9; i++) {
+        uint8_t profile = levelProfiles[level][i];
+        // profile now tells us how many NPCs of difficulty i we want
+        while(profile > 0 && carNumber <= howManyNPCs) {
+            while(startingGrid[carNumber] == playerCar) {
+                carNumber++;
+            }
+            race_set_car_level(startingGrid[carNumber], i);
+            profile--;
+            carNumber++;            
+        }
     }
     
 }

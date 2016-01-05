@@ -79,7 +79,7 @@ void pge_init() {
     set_up_distance_markers();
     
     // The number represents the difficulty (range 0-9)
-    race_create_cars(0);
+    race_create_cars(9);
 
     // Start the game
     // Keep a Window reference for adding other UI

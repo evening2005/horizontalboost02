@@ -45,7 +45,7 @@ struct CAR {
     uint64_t finished;
     int steeringPlan; // This is a target for worldPosition.y
     uint8_t aiBoostRank; // If we are at least this far down the field AND ..
-    uint8_t aiBoostChance; // .. if (rand() & 255) <= aiBoostChance, we can boost.
+    uint16_t aiBoostChance; // .. if (rand() & 65535) <= aiBoostChance, we can boost.
     time_t boostStartMillis;
     time_t boostDurationMillis;
     time_t maxBoostDurationMillis;
@@ -73,7 +73,7 @@ void car_delete(carType *carPtr);
 void car_set_position(carType *carPtr, carType *playerCar, uint16_t howManyNPCs, uint64_t raceStartTime);
 uint64_t get_milli_time();
 void car_set_player_screen_pos(int posX);
-void car_set_difficulty(carType *carPtr, uint8_t aiRank, uint8_t aiChance);
+void car_set_difficulty(carType *carPtr, uint8_t aiRank, uint16_t aiChance);
 
 /*
 
