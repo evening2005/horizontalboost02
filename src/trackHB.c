@@ -71,9 +71,14 @@ void destroy_kerb_bitmaps() {
     gbitmap_destroy(kerbRight);
 }
 
+static GRect absoluteFinishLineRect;
 
 void load_finish_line_bitmap() {
     finishLine = gbitmap_create_with_resource(RESOURCE_ID_FINISH_LINE);
+    absoluteFinishLineRect.origin.x = TRACK_FINISH_LINE;
+    absoluteFinishLineRect.origin.y = 0;
+    absoluteFinishLineRect.size.w = 150;
+    absoluteFinishLineRect.size.h = 168;
 }
 
 void destroy_finish_line_bitmap() {
@@ -92,13 +97,17 @@ void draw_finish_line(GContext *ctx, int cameraFocus) {
 }
 
 
-bool car_crossed_line(GRect carRect) {
-    if(pge_collision_rectangle_rectangle(&finishLineRect, &carRect)) {
+
+
+bool car_crossed_line(int xPos) {
+    if(xPos >= TRACK_FINISH_LINE) {
         return true;
     } else {
         return false;
     }
 }
+
+
 // This determines how much distance remains
 //  It works in 100s, so it is 100, 200, 300 etc
 static GRect distanceMarkers[33];

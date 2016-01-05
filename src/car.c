@@ -403,12 +403,13 @@ void car_drive_player(carType *carPtr, carType *playerCar, uint16_t howManyNPCs,
 }
 
 void car_check_for_finisher(carType *carPtr, uint64_t raceStartTime) {
-    GRect carRect;
+/*    GRect carRect;
 
     carRect.origin = carPtr->sprite->position;
     carRect.size.w = CAR_WIDTH;
     carRect.size.h = CAR_LENGTH;
-    if(car_crossed_line(carRect)) {
+*/
+    if(car_crossed_line(carPtr->worldPosition.x)) {
         if(carPtr->finished != 0) return;
         int ft = get_milli_time() - raceStartTime;
         carPtr->finished = ft;

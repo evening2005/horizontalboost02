@@ -17,7 +17,7 @@ void load_kerb_bitmaps();
 void destroy_kerb_bitmaps();
 
 void draw_track(GContext *ctx, int cameraFocus);
-bool car_crossed_line(GRect carRect);
+bool car_crossed_line(int xPos);
 void set_up_distance_markers();
 void load_finish_line_bitmap();
 void draw_finish_line(GContext *ctx, int playerPosition);
