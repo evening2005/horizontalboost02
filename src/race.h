@@ -13,15 +13,6 @@ void race_place_cars_on_grid();
 void race_add_to_grid(carType *carPtr);
 void race_create_cars(int level);
 
-struct DIFFICULTY {
-    uint8_t aiRankMin;
-    uint8_t aiRankMax;
-    uint16_t aiChanceMin;
-    uint16_t aiChanceMax;
-};
-
-typedef struct DIFFICULTY difficultyType;
-
 
 
 

@@ -1,5 +1,5 @@
 /**
- * This is the bare minimum to make a looping game with PGE!
+ * Horizontal Boost, version 2
  */
 
 #include <pebble.h>

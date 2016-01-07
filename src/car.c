@@ -125,13 +125,12 @@ void car_update_boost_ui(GContext *ctx, carType *carPtr) {
 void car_draw(GContext *ctx, carType *carPtr, carType *playerCar) {
     pge_sprite_draw(carPtr->sprite, ctx);
     if(carPtr == playerCar) {
-        // car_update_boost_ui(ctx, carPtr);
         GRect temp;
         temp.origin = carPtr->sprite->position;
         temp.size = GSize(CAR_LENGTH, CAR_WIDTH);
         GRect outlineRect = grect_crop(temp, -1); 
         graphics_context_set_stroke_color(ctx, GColorFromRGB(255, 255, 0));
-        graphics_context_set_stroke_width(ctx, 2);
+        graphics_context_set_stroke_width(ctx, 3);
         graphics_draw_rect(ctx, outlineRect);
     }    
 }
@@ -176,12 +175,12 @@ void car_movement(carType *carPtr, uint16_t howManyNPCs, carType *sortedGrid[]) 
     
     if(carPtr->boosting) {
         carPtr->lastBoostMillis = get_milli_time();
-        carPtr->currentSpeed += BOOST_INC;
+        carPtr->currentSpeed += carPtr->thisCarBoostInc;
         // Here we make sure that moving foward at the current speed will not cause
         //  us to crash into a car in front. 
         bool canMove = car_check_forward_movement(carPtr, carPtr->currentSpeed >> 8, howManyNPCs, sortedGrid);
         if(!canMove) {
-            carPtr->currentSpeed -= BOOST_INC;
+            carPtr->currentSpeed -= carPtr->thisCarBoostInc;
             carPtr->currentSpeed += SPEED_INC;            
         }
         int tempSpeed = carPtr->currentSpeed;
@@ -384,11 +383,9 @@ void car_handle_ai(carType *carPtr, carType *playerCar, uint16_t howManyNPCs, ca
     car_ai_create_steering_plan(carPtr, sortedGrid);
     car_ai_execute_steering_plan(carPtr, howManyNPCs, sortedGrid);
     // This functionality is for the "per-car" AI
-    if(carPtr->rank >= carPtr->aiBoostRank) {
-        uint16_t r = rand() & 65535;
-        if(r <= carPtr->aiBoostChance) {
-            car_switch_on_boost(carPtr, playerCar);
-        }
+    uint16_t r = rand() & 65535;
+    if(r <= BOOST_CHANCE) {
+        car_switch_on_boost(carPtr, playerCar);
     }
 }
 
@@ -403,12 +400,6 @@ void car_drive_player(carType *carPtr, carType *playerCar, uint16_t howManyNPCs,
 }
 
 void car_check_for_finisher(carType *carPtr, uint64_t raceStartTime) {
-/*    GRect carRect;
-
-    carRect.origin = carPtr->sprite->position;
-    carRect.size.w = CAR_WIDTH;
-    carRect.size.h = CAR_LENGTH;
-*/
     if(car_crossed_line(carPtr->worldPosition.x)) {
         if(carPtr->finished != 0) return;
         int ft = get_milli_time() - raceStartTime;
@@ -500,17 +491,14 @@ void car_reset(carType *carPtr, carType *playerCar, uint16_t howManyNPCs, uint64
     carPtr->rank = 1;
     carPtr->currentSpeed = 0;
     carPtr->finished = 0;
-    carPtr->aiBoostRank = 0; 
-    carPtr->aiBoostChance = 16384;
     car_set_position(carPtr, playerCar, howManyNPCs, raceStartTime);
 }
 
 
 
-void car_set_difficulty(carType *carPtr, uint8_t aiRank, uint16_t aiChance) {
-    carPtr->aiBoostRank = aiRank;
-    carPtr->aiBoostChance = aiChance;
-    APP_LOG(APP_LOG_LEVEL_DEBUG, "AI: R=%d : C=%d", aiRank, aiChance);  
+void car_set_difficulty(carType *carPtr, uint8_t boostInc) {
+    carPtr->thisCarBoostInc = boostInc;
+    APP_LOG(APP_LOG_LEVEL_DEBUG, "AI: BI=%d", boostInc);  
 }
 
 // This stuff gets done only once
@@ -519,6 +507,7 @@ void car_initialise(carType *carPtr, int resourceID, GColor colour, char *name) 
     carPtr->sprite = pge_sprite_create(pos, resourceID);
     strncpy(carPtr->carName, name, 11);
     carPtr->carColour = colour;
+    carPtr->thisCarBoostInc = BOOST_INC; // This is the default
 }
 
 

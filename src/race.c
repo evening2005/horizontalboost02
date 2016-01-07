@@ -200,22 +200,11 @@ uint16_t ranged_random(uint16_t min, uint16_t max) {
     return rr;
 }
 
-static difficultyType difficultyParameters[10] = {
-    {4,6,64,128},
-    {3,6,128,256},
-    {3,5,256,372},
-    {2,4,372,512},
-    {1,3,512,1024},
-    {1,3,1024,4096},
-    {1,3,4096,8192},
-    {0,2,8192,16384},
-    {0,2,16384,32768},
-    {0,1,48000,65535}
-};
+static uint8_t boostIncs[10] = { 6, 7, 8, 9, 10, 11, 13, 14, 15, 16};
 
 
 static uint8_t levelProfiles[10][10] = {
-    {6, 1, 1, 0, 0, 0, 0, 0, 0, 0},
+    {5, 2, 1, 0, 0, 0, 0, 0, 0, 0},
     {2, 4, 2, 0, 0, 0, 0, 0, 0, 0},
     {0, 2, 4, 2, 0, 0, 0, 0, 0, 0},
     {0, 0, 0, 2, 4, 2, 0, 0, 0, 0},
@@ -228,18 +217,11 @@ static uint8_t levelProfiles[10][10] = {
 };
 
 
-void race_set_car_level(carType *carPtr, int level) {
-    uint8_t airLo = difficultyParameters[level].aiRankMin;
-    uint8_t airHi = difficultyParameters[level].aiRankMax;
-    uint16_t aicLo = difficultyParameters[level].aiChanceMin;
-    uint16_t aicHi = difficultyParameters[level].aiChanceMax;
-    uint8_t aiRank = ranged_random(airLo, airHi);
-    uint16_t aiChance = ranged_random(aicLo, aicHi);
-    car_set_difficulty(carPtr, aiRank, aiChance);
+void race_set_car_level(carType *carPtr, uint8_t level) {
+    car_set_difficulty(carPtr, boostIncs[level]);
 }
 
-void race_create_cars(int level) {
-    
+void race_create_cars(int level) {  
     car_initialise(&blueCar, RESOURCE_ID_BLUE_CAR, GColorCadetBlue, "Player");    
     race_set_player(&blueCar);
     car_initialise(&orangeCar, RESOURCE_ID_ORANGE_CAR, GColorOrange, "Orange");

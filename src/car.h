@@ -12,8 +12,9 @@
 
 #define SPEED_INC (3)
 #define CRASH_SLOWDOWN (1)
-#define BOOST_INC (11)
+#define BOOST_INC (13)
 #define DRAG_DIVISOR (21)
+#define BOOST_CHANCE (16384) // This is compared with a random number (0..65535)
 
 #define MAX_NPCS (8)
 
@@ -44,8 +45,7 @@ struct CAR {
     uint16_t currentSpeed; 
     uint64_t finished;
     int steeringPlan; // This is a target for worldPosition.y
-    uint8_t aiBoostRank; // If we are at least this far down the field AND ..
-    uint16_t aiBoostChance; // .. if (rand() & 65535) <= aiBoostChance, we can boost.
+    uint8_t thisCarBoostInc;
     time_t boostStartMillis;
     time_t boostDurationMillis;
     time_t maxBoostDurationMillis;
@@ -73,7 +73,7 @@ void car_delete(carType *carPtr);
 void car_set_position(carType *carPtr, carType *playerCar, uint16_t howManyNPCs, uint64_t raceStartTime);
 uint64_t get_milli_time();
 void car_set_player_screen_pos(int posX);
-void car_set_difficulty(carType *carPtr, uint8_t aiRank, uint16_t aiChance);
+void car_set_difficulty(carType *carPtr, uint8_t boostInc);
 
 /*
 
