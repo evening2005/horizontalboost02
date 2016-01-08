@@ -1,6 +1,6 @@
 /**
  * Horizontal Boost, version 2
- */
+*/
 
 #include <pebble.h>
  
@@ -9,15 +9,29 @@
 #include "statemachine.h"
 #include "gamelight.h"
 #include "raceresult.h"
+#include "mainmenu.h"
+#include "trackHB.h"
 
+static uint8_t DIFFICULTY = 5;
 
 static Window *gameWindow;
 
 static void game_logic() {
     // Per-frame game logic here
-    if(get_current_state() == STATE_BEFORERACE) {
+    if(get_current_state() == STATE_SHOWMAINMENU) {
+        mainmenu_show();
+    } else if(get_current_state() == STATE_MARATHON) {
+        race_reset_cars();
+        race_set_difficulty(DIFFICULTY);
+        track_set_length(25000);
+        set_current_state(STATE_BEFORERACE);
+    } else if(get_current_state() == STATE_SPRINT) {
+        race_reset_cars();
+        race_set_difficulty(DIFFICULTY);
+        track_set_length(6000);        
+        set_current_state(STATE_BEFORERACE);
+    } else if(get_current_state() == STATE_BEFORERACE) {
         race_result_create_position_layers();
-        // place_cars_on_grid() is in car.h
         race_place_cars_on_grid();
         race_set_start_time();
         switch_on_light();
@@ -27,7 +41,6 @@ static void game_logic() {
     } else if(get_current_state() == STATE_AFTERRESULTS) {
         psleep(100); // Trying to save the battery!
     }
-
 }
 
 static void game_draw(GContext *ctx) {
@@ -49,21 +62,19 @@ static void game_click(int buttonID, bool longClick) {
             // We really don't want to do anything with it...
         } else if(get_current_state() == STATE_AFTERRESULTS) {
             race_result_destroy_assets();
-            set_current_state(STATE_BEFORERACE);
+            set_current_state(STATE_SHOWMAINMENU);
         }
     }
 }
 
 
 static unsigned int fpsOutputFrequency = 5000;
-
 static AppTimer *fpsTimer;
 
 void show_fps(void *data) {
     APP_LOG(APP_LOG_LEVEL_DEBUG, "FPS : %d", pge_get_average_framerate());
     fpsTimer = app_timer_register(fpsOutputFrequency, (AppTimerCallback)show_fps, NULL);
 }
-
 
 
 void pge_init() {
@@ -79,13 +90,15 @@ void pge_init() {
     set_up_distance_markers();
     
     // The number represents the difficulty (range 0-9)
-    race_create_cars(9);
-
+    race_create_cars();
+    race_set_difficulty(DIFFICULTY);
+    
     // Start the game
     // Keep a Window reference for adding other UI
     pge_begin(GColorBrass, game_logic, game_draw, game_click);
     gameWindow = pge_get_window();
-    set_current_state(STATE_BEFORERACE);
+    mainmenu_create();
+    set_current_state(STATE_SHOWMAINMENU);
 }
 
 void pge_deinit() {
@@ -97,6 +110,7 @@ void pge_deinit() {
     destroy_kerb_bitmaps();
     destroy_finish_line_bitmap();
     light_off(NULL);
+    mainmenu_destroy();
     pge_finish();
 }
 

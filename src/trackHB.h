@@ -12,7 +12,8 @@
 #define TRACK_CENTRE_LINE (84)
 
 
-
+void track_set_length(int16_t length);
+int16_t track_get_length();
 void load_kerb_bitmaps();
 void destroy_kerb_bitmaps();
 

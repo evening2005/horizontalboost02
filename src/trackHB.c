@@ -3,8 +3,17 @@
 #include "pge_sprite.h"
 #include "pge_collision.h"
 
-static GRect gridPositions[GRID_SIZE];
+static int16_t trackFinishLine = TRACK_FINISH_LINE;
 
+void track_set_length(int16_t length) {
+    trackFinishLine = length;
+}
+
+int16_t track_get_length() {
+    return trackFinishLine;
+}
+
+static GRect gridPositions[GRID_SIZE];
 
 #define FRONTX (-20)
 #define SECONDX (-60)
@@ -75,7 +84,7 @@ static GRect absoluteFinishLineRect;
 
 void load_finish_line_bitmap() {
     finishLine = gbitmap_create_with_resource(RESOURCE_ID_FINISH_LINE);
-    absoluteFinishLineRect.origin.x = TRACK_FINISH_LINE;
+    absoluteFinishLineRect.origin.x = trackFinishLine;
     absoluteFinishLineRect.origin.y = 0;
     absoluteFinishLineRect.size.w = 150;
     absoluteFinishLineRect.size.h = 168;
@@ -88,7 +97,7 @@ void destroy_finish_line_bitmap() {
 
 static GRect finishLineRect;
 void draw_finish_line(GContext *ctx, int cameraFocus) {
-    int diff = cameraFocus - TRACK_FINISH_LINE;
+    int diff = cameraFocus - trackFinishLine;
     finishLineRect.origin.x = (TRACK_START_LINE - diff - 80);
     finishLineRect.origin.y = 0;
     finishLineRect.size.w = 150;
@@ -100,7 +109,7 @@ void draw_finish_line(GContext *ctx, int cameraFocus) {
 
 
 bool car_crossed_line(int xPos) {
-    if(xPos >= TRACK_FINISH_LINE) {
+    if(xPos >= trackFinishLine) {
         return true;
     } else {
         return false;
@@ -128,14 +137,14 @@ static char distBuf[] = "0000000000000";
 
 void draw_remaining_distance(GContext *ctx, int cameraFocus) {
     // 10 pixels == 1 metre
-    int howFarToGo = (TRACK_FINISH_LINE - cameraFocus) / 10;
+    int howFarToGo = (trackFinishLine - cameraFocus) / 10;
     int diff;
     GRect distanceRect;
     howFarToGo = (howFarToGo / 100);
     int m;
     graphics_context_set_text_color(ctx, GColorBlack);
     for(m=(howFarToGo-1); m <= (howFarToGo+1); m++) {
-        diff = (m * 1000) - (TRACK_FINISH_LINE - cameraFocus);
+        diff = (m * 1000) - (trackFinishLine - cameraFocus);
         distanceRect = distanceMarkers[m];
         distanceRect.origin.x = TRACK_START_LINE - diff;
 

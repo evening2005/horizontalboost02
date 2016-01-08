@@ -11,11 +11,8 @@ void race_set_player(carType *pc);
 void race_frame_update();
 void race_place_cars_on_grid();
 void race_add_to_grid(carType *carPtr);
-void race_create_cars(int level);
-
-
-
-
-
+void race_create_cars();
+void race_set_difficulty(uint8_t difficulty);
+void race_reset_cars();
 
 

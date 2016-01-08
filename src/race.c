@@ -200,7 +200,7 @@ uint16_t ranged_random(uint16_t min, uint16_t max) {
     return rr;
 }
 
-static uint8_t boostIncs[10] = { 6, 7, 8, 9, 10, 11, 13, 14, 15, 16};
+static uint8_t boostIncs[10] = { 6, 7, 8, 10, 11, 12, 13, 13, 14, 15};
 
 
 static uint8_t levelProfiles[10][10] = {
@@ -211,15 +211,44 @@ static uint8_t levelProfiles[10][10] = {
     {0, 0, 0, 0, 2, 4, 2, 0, 0, 0},
     {0, 0, 0, 0, 0, 2, 4, 2, 0, 0},
     {0, 0, 0, 0, 0, 0, 2, 4, 2, 0},
-    {0, 0, 0, 0, 0, 0, 0, 2, 4, 2},
-    {0, 0, 0, 0, 0, 0, 0, 2, 2, 4},
-    {0, 0, 0, 0, 0, 0, 0, 0, 2, 6}   
+    {0, 0, 0, 0, 0, 1, 1, 2, 2, 2},
+    {0, 0, 0, 0, 0, 0, 1, 2, 2, 3},
+    {0, 0, 0, 0, 0, 0, 0, 2, 2, 4}   
 };
 
 
 void race_set_car_level(carType *carPtr, uint8_t level) {
     car_set_difficulty(carPtr, boostIncs[level]);
 }
+
+
+void race_set_difficulty(uint8_t difficulty) {
+    // Now we must set the difficulty levels of the NPC cars
+    int carNumber = 0;
+    for(int i=0; i <= 9; i++) {
+        uint8_t profile = levelProfiles[difficulty][i];
+        // profile now tells us how many NPCs of difficulty i we want
+        while(profile > 0 && carNumber <= howManyNPCs) {
+            while(startingGrid[carNumber] == playerCar) {
+                carNumber++;
+            }
+            race_set_car_level(startingGrid[carNumber], i);
+            profile--;
+            carNumber++;            
+        }
+    }    
+}
+
+
+
+
+void race_reset_cars() {
+    // All the resets are done together here - previously, car_intialise(..) called car_reset(..)
+    for(int i=0; i <= howManyNPCs; i++) {
+        car_reset(startingGrid[i], playerCar, howManyNPCs, raceStartTime);
+    }    
+}
+
 
 void race_create_cars(int level) {  
     car_initialise(&blueCar, RESOURCE_ID_BLUE_CAR, GColorCadetBlue, "Player");    
@@ -241,35 +270,8 @@ void race_create_cars(int level) {
     car_initialise(&blackTruck, RESOURCE_ID_BLACK_TRUCK, GColorBlack, "BlackT");
     race_add_to_grid(&blackTruck);
     
-    // All the resets are done together here - previously, car_intialise(..) called car_reset(..)
-    for(int i=0; i <= howManyNPCs; i++) {
-        car_reset(startingGrid[i], playerCar, howManyNPCs, raceStartTime);
-    }
-    
-    // Now we must set the difficulty levels of the NPC cars
-    int carNumber = 0;
-    for(int i=0; i <= 9; i++) {
-        uint8_t profile = levelProfiles[level][i];
-        // profile now tells us how many NPCs of difficulty i we want
-        while(profile > 0 && carNumber <= howManyNPCs) {
-            while(startingGrid[carNumber] == playerCar) {
-                carNumber++;
-            }
-            race_set_car_level(startingGrid[carNumber], i);
-            profile--;
-            carNumber++;            
-        }
-    }
-    
+    race_reset_cars();
 }
-
-
-
-
-
-
-
-
 
 
 

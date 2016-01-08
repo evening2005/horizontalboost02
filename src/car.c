@@ -69,7 +69,7 @@ void car_set_camera_focus(carType *playerCar) {
     if(playerCar->finished == 0) {
         cameraFocus = playerCar->worldPosition.x;    
     } else {
-        cameraFocus = TRACK_FINISH_LINE;
+        cameraFocus = track_get_length();
     }
 }
 
@@ -169,7 +169,7 @@ bool car_check_forward_movement(const carType *carPtr, int amount, uint16_t howM
 
 
 void car_movement(carType *carPtr, uint16_t howManyNPCs, carType *sortedGrid[]) {
-    if(carPtr->worldPosition.x > TRACK_FINISH_LINE + 250) {
+    if(carPtr->worldPosition.x > track_get_length() + 250) {
         return;    
     }
     
