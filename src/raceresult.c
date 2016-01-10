@@ -139,9 +139,15 @@ void race_result_destroy_assets() {
     layer_remove_from_parent((Layer *)resultsTitleLayer);
     for(rank = 0; rank < PODIUM_POSITIONS; rank++) {
         layer_remove_from_parent((Layer *)positionLayers[rank]);
-        text_layer_destroy(positionLayers[rank]);
+        if(positionLayers[rank] != NULL) {
+            text_layer_destroy(positionLayers[rank]);
+            positionLayers[rank] = NULL;
+        }
         layer_remove_from_parent((Layer *)carPositionLayers[rank]);
-        bitmap_layer_destroy(carPositionLayers[rank]);
+        if(carPositionLayers[rank] != NULL) {
+            bitmap_layer_destroy(carPositionLayers[rank]);
+            carPositionLayers[rank] = NULL;        
+        }
     }
     alreadyPopulated = false;
 }

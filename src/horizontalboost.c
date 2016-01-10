@@ -19,16 +19,18 @@ static Window *gameWindow;
 static void game_logic() {
     // Per-frame game logic here
     if(get_current_state() == STATE_SHOWMAINMENU) {
-        mainmenu_show();
+        main_menu_create();
     } else if(get_current_state() == STATE_MARATHON) {
         race_reset_cars();
         race_set_difficulty(DIFFICULTY);
         track_set_length(25000);
+        main_menu_destroy();
         set_current_state(STATE_BEFORERACE);
     } else if(get_current_state() == STATE_SPRINT) {
         race_reset_cars();
         race_set_difficulty(DIFFICULTY);
         track_set_length(6000);        
+        main_menu_destroy();
         set_current_state(STATE_BEFORERACE);
     } else if(get_current_state() == STATE_BEFORERACE) {
         race_result_create_position_layers();
@@ -58,7 +60,7 @@ static void game_draw(GContext *ctx) {
 
 static void game_click(int buttonID, bool longClick) {
     if(buttonID == BUTTON_ID_SELECT) {
-        if(get_current_state() == STATE_RESULTS) {
+    if(get_current_state() == STATE_RESULTS) {
             // We really don't want to do anything with it...
         } else if(get_current_state() == STATE_AFTERRESULTS) {
             race_result_destroy_assets();
@@ -92,12 +94,11 @@ void pge_init() {
     // The number represents the difficulty (range 0-9)
     race_create_cars();
     race_set_difficulty(DIFFICULTY);
-    
     // Start the game
     // Keep a Window reference for adding other UI
     pge_begin(GColorBrass, game_logic, game_draw, game_click);
     gameWindow = pge_get_window();
-    mainmenu_create();
+
     set_current_state(STATE_SHOWMAINMENU);
 }
 
@@ -110,7 +111,7 @@ void pge_deinit() {
     destroy_kerb_bitmaps();
     destroy_finish_line_bitmap();
     light_off(NULL);
-    mainmenu_destroy();
+    main_menu_destroy();
     pge_finish();
 }
 

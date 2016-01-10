@@ -1,8 +1,10 @@
 #pragma once
+#include "pebble.h"
 
-void mainmenu_create();
-void mainmenu_show();
-void mainmenu_destroy();
+Window *main_menu_create();
+void main_menu_show();
+void main_menu_hide();
+void main_menu_destroy();
 
 
 
