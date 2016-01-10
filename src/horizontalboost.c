@@ -42,6 +42,9 @@ static void game_logic() {
         race_frame_update();
     } else if(get_current_state() == STATE_AFTERRESULTS) {
         psleep(100); // Trying to save the battery!
+    } else if(get_current_state() == STATE_QUITTING) {
+        APP_LOG(APP_LOG_LEVEL_DEBUG, "!!!   QUITTING from horizontalboost !!!!");        
+        window_stack_pop(false); 
     }
 }
 
@@ -60,11 +63,25 @@ static void game_draw(GContext *ctx) {
 
 static void game_click(int buttonID, bool longClick) {
     if(buttonID == BUTTON_ID_SELECT) {
-    if(get_current_state() == STATE_RESULTS) {
+        if(get_current_state() == STATE_RESULTS) {
             // We really don't want to do anything with it...
         } else if(get_current_state() == STATE_AFTERRESULTS) {
             race_result_destroy_assets();
             set_current_state(STATE_SHOWMAINMENU);
+        }
+    } else if(buttonID == BUTTON_ID_BACK) {
+        APP_LOG(APP_LOG_LEVEL_DEBUG, "!!!   hello BACK pressed !!!! (%d)", get_current_state());
+        switch(get_current_state()) {
+            case STATE_RESULTS:
+            case STATE_QUITTING:
+                    break;
+            case STATE_AFTERRESULTS:
+                    race_result_destroy_assets();
+                    set_current_state(STATE_SHOWMAINMENU);
+                    break;
+            default:
+                    set_current_state(STATE_SHOWMAINMENU); 
+                    break;
         }
     }
 }

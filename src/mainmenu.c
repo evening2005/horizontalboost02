@@ -14,18 +14,22 @@ SimpleMenuSection mainMenuSection;
 static void mm_marathon_not_a_sprint(int index, void *ctx) {
     APP_LOG(APP_LOG_LEVEL_DEBUG, "MARATHON SELECTED");
     set_current_state(STATE_MARATHON);
-    window_stack_pop(false);
+    window_stack_pop(true);
 }
 
 static void mm_sprint_not_a_marathon(int index, void *ctx) {
     APP_LOG(APP_LOG_LEVEL_DEBUG, "SPRINT SELECTED");
     set_current_state(STATE_SPRINT);
-    window_stack_pop(false);
+    window_stack_pop(true);
 }
 
 
 // window should be gameWindow, passed from horizontalboost.c
 Window *main_menu_create() {
+    // Unless we hear otherwise, leaving the menu quits the game
+    // Check out mm_marathon_not_a_sprint(..) above to see how to prevent this!
+    set_current_state(STATE_QUITTING);
+    
     mainMenuItems[0].title  = "MARATHON";
     mainMenuItems[0].subtitle = "It's a marathon, not a sprint!";
     mainMenuItems[0].icon = NULL;
@@ -42,7 +46,10 @@ Window *main_menu_create() {
     mainMenuSection.num_items = 2;
     
     mainMenuWindow = window_create();
-    
+    window_set_window_handlers(mainMenuWindow, (WindowHandlers) {
+        .unload = main_menu_destroy,
+    });
+
     Layer *windowLayer = window_get_root_layer(mainMenuWindow);
     GRect bounds = layer_get_frame(windowLayer);
 
@@ -51,7 +58,6 @@ Window *main_menu_create() {
     layer_add_child(windowLayer, simple_menu_layer_get_layer(mainMenuLayer));
 
     window_stack_push(mainMenuWindow, false);
-    set_current_state(STATE_SELECTFUNCTION);
     
     return mainMenuWindow;
 }
@@ -60,6 +66,7 @@ Window *main_menu_create() {
 void main_menu_destroy() {
     if(mainMenuLayer != NULL) {
         APP_LOG(APP_LOG_LEVEL_DEBUG, "hello from main_menu_destroy!!!!!");
+        APP_LOG(APP_LOG_LEVEL_DEBUG, "Current state is: %d!!!!", get_current_state());
         simple_menu_layer_destroy(mainMenuLayer);
         layer_remove_from_parent((Layer *)mainMenuLayer);
         window_stack_remove(mainMenuWindow, false);

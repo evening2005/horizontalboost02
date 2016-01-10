@@ -238,6 +238,12 @@ static void down_long_click_handler(ClickRecognizerRef recognizer, void *context
   s_click_handler(BUTTON_ID_DOWN, true);
 }
 
+// Added by AW on 10/1/2016
+static void back_click_handler(ClickRecognizerRef recognizer, void *context) {
+    s_click_handler(BUTTON_ID_BACK, true);
+}
+
+
 static void click_config_provider(void *context) {
   window_raw_click_subscribe(BUTTON_ID_UP, up_pressed_click_handler, up_released_click_handler, NULL);
   window_raw_click_subscribe(BUTTON_ID_SELECT, select_pressed_click_handler, select_released_click_handler, NULL);
@@ -246,6 +252,8 @@ static void click_config_provider(void *context) {
   window_single_click_subscribe(BUTTON_ID_SELECT, select_click_handler);
   window_single_click_subscribe(BUTTON_ID_UP, up_click_handler);
   window_single_click_subscribe(BUTTON_ID_DOWN, down_click_handler);
+
+  window_single_click_subscribe(BUTTON_ID_BACK, back_click_handler); // AW added on 10/1/2016
 
   window_long_click_subscribe(BUTTON_ID_SELECT, 500, select_long_click_handler, NULL);
   window_long_click_subscribe(BUTTON_ID_UP, 500, up_long_click_handler, NULL);
